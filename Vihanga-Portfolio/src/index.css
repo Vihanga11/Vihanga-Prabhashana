@@ -8,7 +8,17 @@
   }
 
   body {
-    @apply antialiased;
+    @apply antialiased bg-white dark:bg-dark-bg text-black dark:text-dark-text transition-colors duration-200;
+  }
+}
+
+@layer components {
+  .hover-effect {
+    @apply transition-all duration-200 hover:scale-105 hover:shadow-lg;
+  }
+  
+  .hover-lift {
+    @apply transition-all duration-200 hover:-translate-y-1;
   }
 }
 

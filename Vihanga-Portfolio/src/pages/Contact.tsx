@@ -19,15 +19,21 @@ const Contact: React.FC = () => {
             <div className="space-y-4 mb-8">
               <div className="flex items-center">
                 <Mail className="w-5 h-5 mr-3 text-gray-600" />
-                <span>vihangaprabhashana4@gmail.com</span>
+                <div>
+                  <p>vihangaprabhashana4@gmail.com</p>
+                  <p>glamoraframe@gmail.com</p>
+                </div>
               </div>
               <div className="flex items-center">
                 <Phone className="w-5 h-5 mr-3 text-gray-600" />
-                <span>+94 </span>
+                <div>
+                  <p>+94 72 361 5111</p>
+                  <p>+94 77 033 5729</p>
+                </div>
               </div>
               <div className="flex items-center">
                 <MapPin className="w-5 h-5 mr-3 text-gray-600" />
-                <span>New York, NY</span>
+                <span>Matugama, Sri Lanka</span>
               </div>
             </div>
             

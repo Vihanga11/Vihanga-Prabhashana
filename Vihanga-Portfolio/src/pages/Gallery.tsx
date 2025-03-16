@@ -29,10 +29,10 @@ const Gallery: React.FC = () => {
         <div className="flex flex-wrap gap-4 mb-8">
           <button
             onClick={() => setSelectedCategory(null)}
-            className={`px-4 py-2 rounded-full ${
+            className={`px-6 py-2 rounded-full transition-all duration-200 ${
               selectedCategory === null
-                ? 'bg-black text-white'
-                : 'bg-gray-200 hover:bg-gray-300'
+                ? 'bg-black text-white dark:bg-white dark:text-black font-medium shadow-lg'
+                : 'bg-gray-100 hover:bg-gray-200 dark:bg-gray-800 dark:hover:bg-gray-700 dark:text-gray-200'
             }`}
           >
             All
@@ -41,10 +41,10 @@ const Gallery: React.FC = () => {
             <button
               key={category}
               onClick={() => setSelectedCategory(category)}
-              className={`px-4 py-2 rounded-full ${
+              className={`px-6 py-2 rounded-full transition-all duration-200 ${
                 selectedCategory === category
-                  ? 'bg-black text-white'
-                  : 'bg-gray-200 hover:bg-gray-300'
+                  ? 'bg-black text-white dark:bg-white dark:text-black font-medium shadow-lg'
+                  : 'bg-gray-100 hover:bg-gray-200 dark:bg-gray-800 dark:hover:bg-gray-700 dark:text-gray-200'
               }`}
             >
               {category}
