@@ -1,4 +1,4 @@
-import { Photo, Testimonial, BlogPost } from './types';
+import { Photo, BlogPost } from './types';
 
 export const photos: Photo[] = [
   {
@@ -14,17 +14,6 @@ export const photos: Photo[] = [
     title: "Urban Portrait"
   },
   // Add more sample photos as needed
-];
-
-export const testimonials: Testimonial[] = [
-  {
-    id: 1,
-    name: "Sarah Johnson",
-    role: "Wedding Client",
-    content: "Vihanga captured our special day perfectly. The attention to detail and creativity in each shot was remarkable.",
-    avatar: "https://images.unsplash.com/photo-1494790108377-be9c29b29330"
-  },
-  // Add more testimonials
 ];
 
 export const blogPosts: BlogPost[] = [

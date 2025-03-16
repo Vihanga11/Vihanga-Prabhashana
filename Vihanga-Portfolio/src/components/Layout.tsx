@@ -2,7 +2,26 @@ import React from 'react';
 import { Link, Outlet, useLocation } from 'react-router-dom';
 import { Camera, Menu, X } from 'lucide-react';
 
-const Layout: React.FC = () => {
+const NavigationLink = React.memo(({ item, location, onClick }: {
+  item: { name: string; path: string };
+  location: { pathname: string };
+  onClick?: () => void;
+}) => (
+  <Link
+    key={item.name}
+    to={item.path}
+    className={`${
+      location.pathname === item.path
+        ? 'text-black'
+        : 'text-gray-500 hover:text-black'
+    } ${onClick ? 'block px-3 py-2 text-base' : ''} transition-colors duration-200`}
+    onClick={onClick}
+  >
+    {item.name}
+  </Link>
+));
+
+const Layout: React.FC = React.memo(() => {
   const [isMenuOpen, setIsMenuOpen] = React.useState(false);
   const location = useLocation();
 
@@ -11,7 +30,6 @@ const Layout: React.FC = () => {
     { name: 'About', path: '/about' },
     { name: 'Gallery', path: '/gallery' },
     { name: 'Blog', path: '/blog' },
-    { name: 'Testimonials', path: '/testimonials' },
     { name: 'Contact', path: '/contact' },
   ];
 
@@ -30,17 +48,7 @@ const Layout: React.FC = () => {
             {/* Desktop Navigation */}
             <div className="hidden md:flex items-center space-x-8">
               {navigation.map((item) => (
-                <Link
-                  key={item.name}
-                  to={item.path}
-                  className={`${
-                    location.pathname === item.path
-                      ? 'text-black'
-                      : 'text-gray-500 hover:text-black'
-                  } transition-colors duration-200`}
-                >
-                  {item.name}
-                </Link>
+                <NavigationLink key={item.name} item={item} location={location} />
               ))}
             </div>
 
@@ -61,18 +69,12 @@ const Layout: React.FC = () => {
           <div className="md:hidden">
             <div className="px-2 pt-2 pb-3 space-y-1 sm:px-3 bg-white border-b">
               {navigation.map((item) => (
-                <Link
+                <NavigationLink
                   key={item.name}
-                  to={item.path}
-                  className={`${
-                    location.pathname === item.path
-                      ? 'text-black'
-                      : 'text-gray-500 hover:text-black'
-                  } block px-3 py-2 text-base`}
+                  item={item}
+                  location={location}
                   onClick={() => setIsMenuOpen(false)}
-                >
-                  {item.name}
-                </Link>
+                />
               ))}
             </div>
           </div>
@@ -121,6 +123,6 @@ const Layout: React.FC = () => {
       </footer>
     </div>
   );
-};
+});
 
 export default Layout;
