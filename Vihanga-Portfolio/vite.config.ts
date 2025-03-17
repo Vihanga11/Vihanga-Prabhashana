@@ -5,7 +5,7 @@ export default defineConfig({
   plugins: [react()],
   build: {
     target: 'esnext',
-    minify: 'terser',
+    minify: 'esbuild', // Change to esbuild instead of terser
     cssMinify: true,
     rollupOptions: {
       output: {

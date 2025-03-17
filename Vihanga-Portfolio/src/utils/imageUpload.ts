@@ -1,21 +1,21 @@
+import { ref, uploadBytes, getDownloadURL } from 'firebase/storage';
+import { storage } from '../config/firebase';
+
 export async function uploadImage(file: File): Promise<string> {
   try {
-    // Use FormData to send the file
-    const formData = new FormData();
-    formData.append('file', file);
+    // Create unique filename
+    const timestamp = Date.now();
+    const filename = `images/${timestamp}_${file.name}`;
     
-    // Replace this URL with your actual image upload API endpoint
-    const response = await fetch('YOUR_UPLOAD_API_ENDPOINT', {
-      method: 'POST',
-      body: formData,
-    });
-
-    if (!response.ok) {
-      throw new Error('Failed to upload image');
-    }
-
-    const data = await response.json();
-    return data.url; // Assuming the API returns the image URL
+    // Create storage reference
+    const storageRef = ref(storage, filename);
+    
+    // Upload file
+    const snapshot = await uploadBytes(storageRef, file);
+    
+    // Get download URL
+    const downloadURL = await getDownloadURL(snapshot.ref);
+    return downloadURL;
   } catch (error) {
     console.error('Error uploading image:', error);
     throw error;
