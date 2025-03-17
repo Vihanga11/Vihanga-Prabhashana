@@ -3,6 +3,11 @@ import react from '@vitejs/plugin-react';
 
 export default defineConfig({
   plugins: [react()],
+  server: {
+    port: 5173,
+    host: true, // Expose to all network interfaces
+    strictPort: true, // Fail if port is in use
+  },
   build: {
     target: 'esnext',
     minify: 'esbuild', // Change to esbuild instead of terser

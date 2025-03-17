@@ -1,35 +1,55 @@
 import React from 'react';
-import { Link, Outlet, useLocation } from 'react-router-dom';
-import { Camera, Menu, X, Sun, Moon } from 'lucide-react';
+import { Link, Outlet, useLocation, useNavigate } from 'react-router-dom';
+import { Camera, Menu, X, Sun, Moon, LogOut, User } from 'lucide-react';
 import { useTheme } from '../context/ThemeContext';
+import { useAuth } from '../context/AuthContext';
 import ScrollToBottom from './ScrollToBottom';
 
 const NavigationLink = React.memo(({ item, location, onClick }: {
   item: { name: string; path: string };
   location: { pathname: string };
   onClick?: () => void;
-}) => (
-  <Link
-    key={item.name}
-    to={item.path}
-    onClick={(e) => {
-      scrollToSection(e, item.path);
-      onClick?.();
-    }}
-    className={`${
-      location.pathname === item.path
-        ? 'text-black dark:text-white'
-        : 'text-gray-500 hover:text-black dark:text-gray-300 dark:hover:text-white'
-    } ${onClick ? 'block px-3 py-2 text-base' : ''} transition-all duration-200 hover:scale-105`}
-  >
-    {item.name}
-  </Link>
-));
+}) => {
+  const isHashLink = item.path.startsWith('#');
+
+  if (isHashLink) {
+    return (
+      <a
+        href={item.path}
+        onClick={(e) => {
+          e.preventDefault();
+          const element = document.querySelector(item.path);
+          element?.scrollIntoView({ behavior: 'smooth' });
+          onClick?.();
+        }}
+        className={`${onClick ? 'block px-3 py-2 text-base' : ''} text-gray-500 hover:text-black dark:text-gray-300 dark:hover:text-white transition-all duration-200 hover:scale-105`}
+      >
+        {item.name}
+      </a>
+    );
+  }
+
+  return (
+    <Link
+      to={item.path}
+      onClick={onClick}
+      className={`${
+        location.pathname === item.path
+          ? 'text-black dark:text-white'
+          : 'text-gray-500 hover:text-black dark:text-gray-300 dark:hover:text-white'
+      } ${onClick ? 'block px-3 py-2 text-base' : ''} transition-all duration-200 hover:scale-105`}
+    >
+      {item.name}
+    </Link>
+  );
+});
 
 const Layout: React.FC<{ children: React.ReactNode }> = React.memo(({ children }) => {
   const [isMenuOpen, setIsMenuOpen] = React.useState(false);
   const location = useLocation();
   const { theme, toggleTheme } = useTheme();
+  const { user, logout } = useAuth();
+  const navigate = useNavigate();
 
   const navigation = [
     { name: 'Home', path: '#hero' },
@@ -38,6 +58,15 @@ const Layout: React.FC<{ children: React.ReactNode }> = React.memo(({ children }
     { name: 'Blog', path: '#blog' },
     { name: 'Contact', path: '#contact' },
   ];
+
+  const handleLogout = async () => {
+    try {
+      await logout();
+      navigate('/login');
+    } catch (error) {
+      console.error('Failed to log out:', error);
+    }
+  };
 
   const scrollToSection = (e: React.MouseEvent<HTMLAnchorElement>, path: string) => {
     e.preventDefault();
@@ -63,9 +92,39 @@ const Layout: React.FC<{ children: React.ReactNode }> = React.memo(({ children }
               {navigation.map((item) => (
                 <NavigationLink key={item.name} item={item} location={location} />
               ))}
+              
+              {user ? (
+                <div className="flex items-center space-x-4">
+                  <span className="text-sm text-gray-700 dark:text-gray-300">
+                    {user.email}
+                  </span>
+                  <button
+                    onClick={handleLogout}
+                    className="flex items-center space-x-2 text-gray-700 hover:text-black dark:text-gray-300 dark:hover:text-white"
+                  >
+                    <LogOut className="h-5 w-5" />
+                  </button>
+                </div>
+              ) : (
+                <div className="flex items-center space-x-4">
+                  <Link
+                    to="/login"
+                    className="text-gray-700 hover:text-black dark:text-gray-300 dark:hover:text-white"
+                  >
+                    Login
+                  </Link>
+                  <Link
+                    to="/register"
+                    className="bg-black text-white px-4 py-2 rounded-md hover:bg-gray-800 dark:bg-white dark:text-black dark:hover:bg-gray-200"
+                  >
+                    Register
+                  </Link>
+                </div>
+              )}
+
               <button
                 onClick={toggleTheme}
-                className="p-2 rounded-full hover:bg-gray-100 dark:hover:bg-gray-700 transform transition-all duration-200 hover:scale-110 hover:shadow-lg"
+                className="p-2 rounded-full hover:bg-gray-100 dark:hover:bg-gray-700"
               >
                 {theme === 'dark' ? <Sun className="h-5 w-5" /> : <Moon className="h-5 w-5" />}
               </button>
@@ -86,7 +145,7 @@ const Layout: React.FC<{ children: React.ReactNode }> = React.memo(({ children }
         {/* Mobile Navigation */}
         {isMenuOpen && (
           <div className="md:hidden">
-            <div className="px-2 pt-2 pb-3 space-y-1 sm:px-3 bg-white border-b">
+            <div className="px-2 pt-2 pb-3 space-y-1 sm:px-3 bg-white dark:bg-dark-surface border-b">
               {navigation.map((item) => (
                 <NavigationLink
                   key={item.name}
@@ -95,12 +154,42 @@ const Layout: React.FC<{ children: React.ReactNode }> = React.memo(({ children }
                   onClick={() => setIsMenuOpen(false)}
                 />
               ))}
+              {user ? (
+                <>
+                  <div className="px-3 py-2 text-sm text-gray-700 dark:text-gray-300">
+                    {user.email}
+                  </div>
+                  <button
+                    onClick={handleLogout}
+                    className="w-full text-left px-3 py-2 text-base text-gray-700 hover:text-black dark:text-gray-300 dark:hover:text-white"
+                  >
+                    Logout
+                  </button>
+                </>
+              ) : (
+                <>
+                  <Link
+                    to="/login"
+                    className="block px-3 py-2 text-base text-gray-700 hover:text-black dark:text-gray-300 dark:hover:text-white"
+                    onClick={() => setIsMenuOpen(false)}
+                  >
+                    Login
+                  </Link>
+                  <Link
+                    to="/register"
+                    className="block px-3 py-2 text-base text-gray-700 hover:text-black dark:text-gray-300 dark:hover:text-white"
+                    onClick={() => setIsMenuOpen(false)}
+                  >
+                    Register
+                  </Link>
+                </>
+              )}
             </div>
           </div>
         )}
       </nav>
 
-      <main className="min-h-screen">
+      <main className="min-h-screen pt-16"> {/* Add padding-top to account for fixed navbar */}
         {children}
         <ScrollToBottom />
       </main>
